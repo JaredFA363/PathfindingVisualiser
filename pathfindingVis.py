@@ -16,6 +16,7 @@ box_height = w_height//rows
 
 # stores all the indicies in the window
 grid = []
+queue = []
 
 class Box:
     def __init__(self, i, j):
@@ -25,10 +26,27 @@ class Box:
         self.start = False
         self.wall = False
         self.target = False
+        #Flags for Dijkstra's Algorithm
+        self.queued = False
+        self.visited = False
+        self.neighbour = []
 
     def draw(self, window_d, colour):
         # - 2 on box width and height inorder to show border
         pygame.draw.rect(window_d, colour, (self.x * box_width, self.y * box_height, box_width - 2, box_height - 2))
+
+    def set_neighbour(self):
+        # Horizontal Neighbours
+        if self.x > 0:
+            self.neighbour.append(grid[self.x - 1][self.y])
+        if self.x < columns - 1:
+            self.neighbour.append(grid[self.x + 1][self.y])
+        # Vertical Neighbours
+        if self.y > 0:
+            self.neighbour.append(grid[self.x][self.y - 1])
+        if self.y < rows - 1:
+            self.neighbour.append(grid[self.x][self.y + 1])
+
 
 
 # Creating Grid
@@ -38,14 +56,23 @@ for i in range(columns):
         array.append(Box(i, j))
     grid.append(array)
 
+# Set Neighbours
+for i in range(columns):
+    for j in range(rows):
+        grid[i][j].set_neighbour()
+
 # Start of grid is top left corner
 start_grid = grid[0][0]
-start_grid.start = False
+start_grid.start = True
+start_grid.visited = True
+# First box will be in queue
+queue.append(start_grid)
 
 def main():
     begin_search = False
     target_box_set = False
     target_box = None
+    searching = True
 
     while True:
         for event in pygame.event.get():
@@ -74,6 +101,25 @@ def main():
             if event.type == pygame.KEYDOWN and target_box_set:
                 begin_search = True
 
+        if begin_search:
+            if len(queue) > 0 and searching:
+                current_box = queue.pop(0)
+                current_box.visited = True
+                if current_box == target_box:
+                    searching = False
+                else:
+                    #iterates between all neighbours in currentbos
+                    for neighbour in current_box.neighbour:
+                        if not neighbour.queued and not neighbour.wall:
+                            neighbour.queued = True
+                            queue.append(neighbour)
+        #if no solution
+            else:
+                if searching:
+                    Tk().wm_withdraw()
+                    messagebox.showinfo("No Solution", "There is No Solution")
+                    searching = False
+
         #Fills window with black
         window.fill((0, 0, 0))
 
@@ -82,6 +128,12 @@ def main():
             for j in range(rows):
                 box = grid[i][j]
                 box.draw(window, (50,50,50))
+
+                if box.queued:
+                    box.draw(window, (200,0,0))
+                if box.visited:
+                    box.draw(window, (0,200,0))
+
                 if box.start:
                     box.draw(window, (0,200,200))
                 if box.wall:
