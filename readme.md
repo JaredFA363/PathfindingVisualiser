@@ -3,7 +3,9 @@
 Program made with Tkinter and Pygame modules for visualing a pathfinding algortihm. The pathfinding algorithm used is Dijkstra's shortest path algorithm.
 
 ## Demo
-v1
+
+https://user-images.githubusercontent.com/52663734/171914757-b3199d48-d597-4e99-abf8-2283f5fd4d10.mp4
+
 
 ## Using Applications
 - Clone Guthub repository
