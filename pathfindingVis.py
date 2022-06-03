@@ -140,7 +140,7 @@ def main():
                 box.draw(window, (50,50,50))
 
                 if box.queued:
-                    box.draw(window, (200,0,0))
+                    box.draw(window, (255,0,255))
                 if box.visited:
                     box.draw(window, (0,200,0))
                 if box in path:
@@ -151,7 +151,7 @@ def main():
                 if box.wall:
                     box.draw(window, (90,90,90))
                 if box.target:
-                    box.draw(window, (200,200,0))
+                    box.draw(window, (255,0,0))
 
         #Updates Window
         pygame.display.flip()
